@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header text-center">
+        <span class="icon">✅</span>
+        <h2>Task Deleted</h2>
+        <p>The selected task has been successfully removed.</p>
+    </div>
+
+    <div class="card-body">
+        <div class="actions">
+            <a href="{% url 'add_task' %}" class="btn">➕ Add New Task</a>
+            <a href="{% url 'task_list' %}" class="btn secondary">⬅ Back to Task List</a>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Center text for header */
+.card-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.card-header h2 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.card-header p {
+    font-size: 16px;
+    color: #555;
+}
+
+/* Buttons styling */
+.actions {
+    display: flex;
+    justify-content: center;
+    gap: 40px; /* spacing between buttons */
+    margin-top: 25px;
+}
+
+.btn {
+    padding: 14px 30px;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 12px;
+    text-decoration: none;
+    background: #f0f0f0;
+    border: 2px solid #ccc;
+    transition: 0.2s ease-in-out;
+}
+
+.btn:hover {
+    background: #ddd;
+}
+</style>
+{% endblock %}

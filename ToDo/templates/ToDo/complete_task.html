@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="task-complete-card">
+    <h2>✅ Task Completed</h2>
+    <a href="{% url 'task_list' %}" class="btn">⬅ Back to the Task List</a>
+</div>
+
+<style>
+.task-complete-card {
+    text-align: center;
+    margin-top: 40px;
+}
+
+.task-complete-card h2 {
+    font-size: 26px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* Button styling */
+.task-complete-card .btn {
+    display: inline-block;
+    padding: 12px 25px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 16px;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.task-complete-card .btn:hover {
+    background: linear-gradient(135deg, #5a67d8, #6b46c1);
+}
+</style>
+{% endblock %}

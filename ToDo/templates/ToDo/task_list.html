@@ -1,0 +1,264 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="content">
+    <!-- Task List Section -->
+    <div class="task-section">
+        <!-- Centered Task List Heading -->
+        <h2 class="task-heading">Task List</h2>
+        
+        <!-- Add Task Button -->
+        <div class="add-task-container">
+            <a href="{% url 'add_task' %}" class="add-task-btn">
+                Add New Task
+            </a>
+        </div>
+
+        <!-- Task List -->
+        <ul class="task-list">
+        {% for task in tasks %}
+            <li class="task-item {% if task.completed %}completed{% endif %}">
+                <div class="task-content">
+                    <div class="task-info">
+                        <!-- Task Status Indicator -->
+                        <div class="status-indicator {% if task.completed %}completed-indicator{% else %}pending-indicator{% endif %}"></div>
+                        
+                        <!-- Task Title -->
+                        <span class="task-text">
+                            {{ task.title }}
+                        </span>
+                    </div>
+                    
+                    <div class="task-actions">
+                        <!-- Status Badge -->
+                        <span class="status-badge {% if task.completed %}completed-badge{% else %}pending-badge{% endif %}">
+                            {% if task.completed %}Completed{% else %}Pending{% endif %}
+                        </span>
+                        
+                        <!-- Action Buttons -->
+                        {% if not task.completed %}
+                        <a href="{% url 'complete_task' task.id %}" class="action-btn complete-btn">
+                            Complete
+                        </a>
+                        {% else %}
+                        <span class="action-btn complete-btn disabled-btn">
+                            Completed
+                        </span>
+                        {% endif %}
+                        
+                        <a href="{% url 'delete_task' task.id %}" class="action-btn delete-btn">
+                            Delete
+                        </a>
+                    </div>
+                </div>
+            </li>
+        {% empty %}
+            <li class="empty-state">
+                <div class="empty-icon">📋</div>
+                <p class="empty-text">No tasks yet.</p>
+                <a href="{% url 'add_task' %}" class="add-task-btn">
+                    Add Your First Task
+                </a>
+            </li>
+        {% endfor %}
+        </ul>
+    </div>
+</div>
+
+<style>
+/* Section */
+.task-section {
+    margin: 20px auto;
+    max-width: 800px;
+}
+
+/* Heading */
+.task-heading {
+    font-size: 32px;
+    font-weight: bold;
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+    padding: 15px;
+    background: linear-gradient(to right, #eef3ff, #f3f5ff);
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+/* Add Task Button */
+.add-task-container {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.add-task-btn {
+    display: inline-block;
+    padding: 12px 30px;
+    background: #2563eb;
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: background 0.3s, transform 0.2s;
+}
+
+.add-task-btn:hover {
+    background: #1e4ecf;
+    transform: translateY(-2px);
+}
+
+/* Task List */
+.task-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.task-item {
+    background: white;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    animation: fadeIn 0.4s;
+}
+
+.task-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.task-info {
+    display: flex;
+    align-items: center;
+}
+
+.status-indicator {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    margin-right: 12px;
+}
+
+.completed-indicator {
+    background: #4CAF50;
+}
+.pending-indicator {
+    background: #FF9800;
+}
+
+.task-text {
+    font-size: 18px;
+    font-weight: 500;
+    color: #333;
+}
+
+/* I have removed the 'completed-text' class which applied the line-through effect */
+/* .completed-text {
+    text-decoration: line-through;
+    color: #888;
+} */
+
+/* Status Badge */
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-right: 10px;
+    display: inline-block;
+}
+
+.completed-badge {
+    background: #4CAF50;
+    color: white;
+}
+
+.pending-badge {
+    background: #FF9800;
+    color: white;
+}
+
+/* Action Buttons */
+.task-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.action-btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s;
+    display: inline-block;
+}
+
+.complete-btn {
+    background: #4CAF50;
+    color: white;
+}
+
+.complete-btn:hover {
+    background: #3e8e41;
+}
+
+.delete-btn {
+    background: #f44336;
+    color: white;
+}
+
+.delete-btn:hover {
+    background: #d32f2f;
+}
+
+.disabled-btn {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 50px 20px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    margin-top: 20px;
+}
+
+.empty-icon {
+    font-size: 50px;
+    margin-bottom: 10px;
+}
+
+.empty-text {
+    font-size: 18px;
+    color: #666;
+    margin-bottom: 15px;
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .task-content {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .task-actions {
+        margin-top: 10px;
+        width: 100%;
+        justify-content: flex-end;
+    }
+}
+</style>
+{% endblock %}

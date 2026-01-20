@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="add-page">
+    <h2 class="page-title">Add New Task</h2>
+    <p class="page-subtitle">Stay organized and add a new task</p>
+
+    <form method="post" class="add-form">
+        {% csrf_token %}
+
+        <label for="title" class="lbl">Task Title</label>
+        <input id="title" name="title" type="text" class="txt" placeholder="Enter task title" required>
+
+        <label class="lbl">Status</label>
+        <div class="radios">
+            <label><input type="radio" name="status" value="pending" checked> Pending</label>
+            <label><input type="radio" name="status" value="completed"> Completed</label>
+        </div>
+
+        <button type="submit" class="btn-primary">+ Add Task</button>
+    </form>
+
+    <div class="back">
+        <a href="{% url 'task_list' %}" class="back-link">← Return to Task List</a>
+    </div>
+</div>
+
+<style>
+/* --- Local styles for Add page (no Tailwind) --- */
+
+/* Keep your base gradient from base.html: nothing added to body */
+
+/* Container */
+.add-page{
+    max-width:520px;
+    margin:0 auto;
+    background:#fff;
+    border-radius:12px;
+    box-shadow:0 10px 30px rgba(0,0,0,.12);
+    padding:28px 26px;
+}
+
+/* Headings */
+.page-title{
+    font-size:28px;
+    font-weight:800;
+    color:#333;
+    margin-bottom:6px;
+}
+.page-subtitle{
+    color:#666;
+    font-size:14px;
+    margin-bottom:18px;
+}
+
+/* Form */
+.add-form{ display:block; }
+.lbl{ display:block; font-weight:600; color:#444; margin:14px 0 6px; }
+.txt{
+    width:100%;
+    padding:12px 14px;
+    border:2px solid #ddd;
+    border-radius:8px;
+    font-size:16px;
+    outline:0;
+    transition:border-color .2s;
+}
+.txt:focus{ border-color:#6a11cb; }
+
+/* Radios */
+.radios{ display:flex; gap:24px; align-items:center; margin-top:6px; }
+
+/* Button */
+.btn-primary{
+    width:100%;
+    margin-top:20px;
+    padding:14px 16px;
+    background:#6a11cb;
+    color:#fff;
+    border:none;
+    border-radius:10px;
+    font-weight:700;
+    font-size:16px;
+    cursor:pointer;
+    box-shadow:0 6px 16px rgba(0,0,0,.15);
+    transition:transform .15s ease, background .2s ease;
+}
+.btn-primary:hover{ background:#2575fc; transform:translateY(-2px); }
+
+/* Back link (NO SVG to avoid giant arrow) */
+.back{ text-align:center; margin-top:16px; }
+.back-link{
+    color:#6a11cb;
+    font-weight:600;
+    text-decoration:none;
+}
+.back-link:hover{ text-decoration:underline; }
+
+/* Make sure any SVGs in this page never blow up if added later */
+.add-page svg{ width:16px; height:16px; display:inline-block; vertical-align:middle; }
+</style>
+{% endblock %}
