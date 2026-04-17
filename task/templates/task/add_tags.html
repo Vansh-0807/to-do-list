@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Tags</title>
+    <style>
+        body {
+            background-color: #000000; /* Darker background to match your screenshot */
+            color: #e0e0e0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden; /* Prevents scrollbars from particle movement */
+        }
+
+        /* Particle Canvas Styling */
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1; /* Keeps it behind your content */
+        }
+
+        .container {
+            background: rgba(30, 30, 30, 0.9); /* Slight transparency to see particles */
+            padding: 2.5rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+            width: 100%;
+            max-width: 450px;
+            backdrop-filter: blur(5px); /* Modern frosted glass look */
+            border: 1px solid #333;
+            z-index: 1;
+        }
+
+        h1, h2 {
+            color: #ffffff;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        h2 {
+            font-size: 1.2rem;
+            margin-top: 2rem;
+            color: #bb86fc;
+        }
+
+        form p {
+            margin-bottom: 1.2rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #cfcfcf;
+        }
+
+        input[type="text"], textarea, select {
+            background-color: #2c2c2c;
+            border: 1px solid #444;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #03dac6;
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            background: linear-gradient(135deg, #bb86fc, #6200ee);
+            color: white;
+            padding: 14px;
+            border: none;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(187, 134, 252, 0.3);
+            margin-top: 10px;
+        }
+
+        input[type="submit"]:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(187, 134, 252, 0.5);
+            filter: brightness(1.1);
+        }
+
+        hr { border: 0; border-top: 1px solid #333; margin: 2rem 0; }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .tag-chip {
+            background: #333;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            border: 1px solid #444;
+            color: #03dac6;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .tag-chip:hover {
+            background: #444;
+            border-color: #03dac6;
+            transform: scale(1.05);
+        }
+
+        .tag-chip:active {
+            transform: scale(0.95);
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 2rem;
+            color: #888;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="particle-canvas"></canvas>
+
+    <div class="container">
+        <h1>Add Tag</h1>
+        
+        <form action="" method="POST" id="tagForm">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" name="submit" value="Add Tag!">
+        </form>
+        
+        {% if tags %}
+            <hr>
+            <h2>Existing Tags</h2>
+            <p style="text-align: center; font-size: 0.8rem; color: #666; margin-top: -10px;">Click a tag to select it</p>
+            <ul>
+            {% for tag in tags %}
+                <li class="tag-chip" style="display: flex; align-items: center; gap: 8px;">
+                    <span onclick="selectTag('{{ tag.name }}')"># {{ tag.name }}</span>
+        
+                    <form action="{% url 'delete_tag' tag.id %}" method="POST" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" style="background: none; border: none; color: #ff4444; cursor: pointer; font-weight: bold; padding: 0 5px;">
+                            &times;
+                        </button>
+                </form>
+            </li>
+        {% endfor %}
+        </ul>
+        {% endif %}
+        
+        <a href="/" class="back-link">🏠 Back to Home</a>
+    </div>
+
+    <script>
+        // --- TAG SELECTION LOGIC ---
+        function selectTag(tagName) {
+            const nameInput = document.querySelector('input[name="name"]') || document.querySelector('#id_name');
+            if (nameInput) {
+                nameInput.value = tagName;
+                nameInput.style.borderColor = '#bb86fc';
+                setTimeout(() => { nameInput.style.borderColor = '#444'; }, 500);
+            }
+        }
+
+        // --- PARTICLE ANIMATION LOGIC ---
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 1.5 + 0.5;
+                this.speedX = Math.random() * 0.5 - 0.25;
+                this.speedY = Math.random() * 0.5 - 0.25;
+                this.opacity = Math.random() * 0.5 + 0.1;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                if (this.x > canvas.width) this.x = 0;
+                else if (this.x < 0) this.x = canvas.width;
+                if (this.y > canvas.height) this.y = 0;
+                else if (this.y < 0) this.y = canvas.height;
+            }
+
+            draw() {
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function init() {
+            particles = [];
+            const numberOfParticles = 100;
+            for (let i = 0; i < numberOfParticles; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animate);
+        }
+
+        init();
+        animate();
+    </script>
+</body>
+</html>
